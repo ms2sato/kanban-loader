@@ -8,9 +8,13 @@ services:
     environment:
       - HOST=0.0.0.0
       - PORT=3000
+      - SSH_AUTH_SOCK=/ssh-agent
     volumes:
       - vibe-kanban-shared:/home/appuser/.local/share/vibe-kanban
       - vibe-kanban-cache:/home/appuser/.cache/vibe-kanban
+      - ~/.gitconfig:/home/appuser/.gitconfig:ro
+      - ~/.gitconfig:/root/.gitconfig:ro
+      - ~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock:/ssh-agent
     restart: unless-stopped
     healthcheck:
       test:
