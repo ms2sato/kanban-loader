@@ -13,6 +13,11 @@ if [ -f /home/appuser/.claude.json ]; then
     chown appuser:appgroup /home/appuser/.claude.json 2>/dev/null || true
 fi
 
+# Adjust GitHub CLI configuration directory permissions
+if [ -d /home/appuser/.config/gh ]; then
+    chown -R appuser:appgroup /home/appuser/.config/gh 2>/dev/null || true
+fi
+
 # Execute as appuser
 if [ "$(id -u)" = "0" ]; then
     exec su-exec appuser "$@"
