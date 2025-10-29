@@ -4,50 +4,29 @@
 
 ## 概要
 
-このプロジェクトは、vibe-kanbanコンテナに以下のツールを追加した開発環境を提供します：
+このプロジェクトは、npmパッケージ版のvibe-kanbanに以下のツールを追加した開発環境を提供します：
 
+- **vibe-kanban** - AI開発タスク管理ツール（npmパッケージ版）
 - **Claude Code** - AI支援開発ツール
 - **GitHub CLI (gh)** - GitHubコマンドラインツール
 - **Git** - バージョン管理
-- **Node.js/npm** - JavaScriptランタイム
+- **Node.js 22** - JavaScriptランタイム
 - **SSH Agent統合** - 1Password経由の認証
-- **追加パッケージ** - カスタマイズ可能なAPKパッケージ
+- **追加パッケージ** - カスタマイズ可能なaptパッケージ
 
 ## 前提条件
 
 - Docker Desktop（Docker Compose対応）
-- `vibe-kanban`ベースイメージ
 - 1Password（SSH Agent機能を使用する場合）
-
-### vibe-kanbanイメージの準備
-
-このプロジェクトは`vibe-kanban`イメージをベースとしています。
-まだイメージをお持ちでない場合は、以下の手順で準備してください：
-
-1. vibe-kanbanリポジトリをクローン:
-   ```bash
-   git clone https://github.com/BloopAI/vibe-kanban ~/tmp/vibe-kanban
-   cd ~/tmp/vibe-kanban
-   ```
-
-2. イメージをビルド:
-   ```bash
-   docker build -t vibe-kanban .
-   ```
-
-3. イメージの確認:
-   ```bash
-   docker images | grep vibe-kanban
-   ```
 
 ## セットアップ
 
-### 1. 設定ファイルの準備
+### 1. 設定ファイルの準備（オプション）
 
-追加でインストールしたいパッケージがある場合は、`config/apk.txt`を作成します：
+追加でインストールしたいパッケージがある場合は、`config/apt.txt`を作成します：
 
 ```bash
-cp config/apk.txt.sample config/apk.txt
+cp config/apt.txt.sample config/apt.txt
 # 必要に応じてパッケージを追加・編集
 ```
 
@@ -160,11 +139,10 @@ docker compose logs -f app
 ├── Dockerfile               # コンテナイメージ定義
 ├── entrypoint.sh            # コンテナ起動スクリプト
 ├── config/
-│   ├── apk.txt.sample      # 追加パッケージのサンプル
-│   ├── apk.txt             # 追加パッケージリスト（任意）
-│   └── claude.json.default # Claude設定のデフォルト
+│   ├── apt.txt.sample      # 追加パッケージのサンプル
+│   └── apt.txt             # 追加パッケージリスト（任意）
 └── data/
-    └── vibe-kanban/        # vibe-kanban設定データ
+    └── vibe-kanban/        # vibe-kanban設定データ（オプション）
 ```
 
 ## ボリューム
@@ -189,11 +167,20 @@ docker compose logs -f app
 
 ### 追加パッケージのインストール
 
-`config/apk.txt`にパッケージ名を追加して、コンテナを再ビルドします：
+`config/apt.txt`にパッケージ名を追加して、コンテナを再ビルドします：
 
 ```bash
-echo "your-package-name" >> config/apk.txt
+echo "your-package-name" >> config/apt.txt
 docker compose up -d --build
+```
+
+### vibe-kanbanのアップデート
+
+コンテナ内でvibe-kanbanを最新版に更新できます：
+
+```bash
+docker compose exec -u root app npm update -g vibe-kanban
+docker compose restart
 ```
 
 ### ポート番号の変更

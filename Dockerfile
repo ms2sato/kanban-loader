@@ -1,38 +1,56 @@
-FROM vibe-kanban
+FROM node:22-bookworm-slim
 
 USER root
 
-RUN apk add --no-cache \
+# 基本パッケージとツールのインストール
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
-    github-cli \
     openssh-client \
-    su-exec \
-    nodejs \
-    npm
+    ca-certificates \
+    curl \
+    wget \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/*
 
+# GitHub CLIのインストール
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+    && apt-get update \
+    && apt-get install -y gh \
+    && rm -rf /var/lib/apt/lists/*
+
+# ユーザーとグループの作成
+RUN groupadd -g 1000 appgroup && \
+    useradd -m -u 1000 -g appgroup -s /bin/bash appuser
+
+# 必要なディレクトリの作成
 RUN mkdir -p /home/appuser/.local/share/vibe-kanban && \
     mkdir -p /home/appuser/.cache/vibe-kanban && \
-    mkdir -p /home/appuser/.claude
+    mkdir -p /home/appuser/.claude && \
+    mkdir -p /repos && \
+    chown -R appuser:appgroup /home/appuser /repos
 
-COPY config/claude.json.default /home/appuser/.claude.json
+# vibe-kanbanとclaude-codeのインストール
+RUN npm install -g vibe-kanban @anthropic-ai/claude-code
 
-RUN chown -R appuser:appgroup /home/appuser
-
-RUN --mount=type=cache,target=/var/cache/apk \
-    --mount=type=bind,source=./config/apk.txt,target=/tmp/apk.txt \
+# 追加パッケージのインストール(オプション)
+COPY config/apt.txt.sample /tmp/apt.txt.sample
+RUN --mount=type=bind,source=./config/apt.txt,target=/tmp/apt.txt \
     sh -c 'set -e; \
-      if [ -s /tmp/apk.txt ]; then \
-        PKGS="$(grep -vE "^\s*#|^\s*$" /tmp/apk.txt | tr "\n" " ")"; \
-        if [ -n "$PKGS" ]; then apk add -U $PKGS; fi; \
-      fi'
-
-RUN npm install -g n && \
-    npm install -g @anthropic-ai/claude-code
+      if [ -s /tmp/apt.txt ]; then \
+        apt-get update; \
+        PKGS="$(grep -vE "^\s*#|^\s*$" /tmp/apt.txt | tr "\n" " ")"; \
+        if [ -n "$PKGS" ]; then \
+          apt-get install -y --no-install-recommends $PKGS; \
+          rm -rf /var/lib/apt/lists/*; \
+        fi; \
+      fi' || true
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 WORKDIR /repos
 
-ENTRYPOINT ["/entrypoint.sh", "/sbin/tini", "--"]
-CMD ["server"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["vibe-kanban"]

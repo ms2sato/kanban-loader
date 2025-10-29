@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 
 # Adjust SSH Agent socket permissions
 if [ -S /ssh-agent ]; then
@@ -9,9 +10,6 @@ fi
 if [ -d /home/appuser/.claude ]; then
     chown -R appuser:appgroup /home/appuser/.claude 2>/dev/null || true
 fi
-if [ -f /home/appuser/.claude.json ]; then
-    chown appuser:appgroup /home/appuser/.claude.json 2>/dev/null || true
-fi
 
 # Adjust GitHub CLI configuration directory permissions
 if [ -d /home/appuser/.config/gh ]; then
@@ -20,7 +18,7 @@ fi
 
 # Execute as appuser
 if [ "$(id -u)" = "0" ]; then
-    exec su-exec appuser "$@"
+    exec su appuser -c "$*"
 else
     exec "$@"
 fi

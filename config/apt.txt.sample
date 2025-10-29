@@ -1,0 +1,13 @@
+bash-completion
+curl
+wget
+less
+jq
+grep
+sed
+gawk
+findutils
+coreutils
+procps
+htop
+vim
