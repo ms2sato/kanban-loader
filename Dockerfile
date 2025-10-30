@@ -22,16 +22,16 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
 
 # Create user and group
 # node:22-bookworm-slim already has node:node user (UID:GID=1000:1000)
-# Create appuser with UID 1001 and add to GID 1000
-RUN if ! id -u appuser >/dev/null 2>&1; then \
-      useradd -m -u 1001 -g 1000 -s /bin/bash appuser; \
+# Create kanban with UID 1001 and add to GID 1000
+RUN if ! id -u kanban >/dev/null 2>&1; then \
+      useradd -m -u 1001 -g 1000 -s /bin/bash kanban; \
     fi
 
-RUN mkdir -p /home/appuser/.local/share/vibe-kanban && \
-    mkdir -p /home/appuser/.cache/vibe-kanban && \
-    mkdir -p /home/appuser/.claude && \
+RUN mkdir -p /home/kanban/.local/share/vibe-kanban && \
+    mkdir -p /home/kanban/.cache/vibe-kanban && \
+    mkdir -p /home/kanban/.claude && \
     mkdir -p /repos && \
-    chown -R appuser:node /home/appuser /repos
+    chown -R kanban:node /home/kanban /repos
 
 # Install additional packages (optional)
 # Copy and use apt.txt only if it exists
@@ -48,8 +48,8 @@ RUN --mount=type=bind,source=./config,target=/mnt/config \
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-ENV NPM_CONFIG_PREFIX=/home/appuser/.npm-global
-ENV PATH=$PATH:/home/appuser/.npm-global/bin
+ENV NPM_CONFIG_PREFIX=/home/kanban/.npm-global
+ENV PATH=$PATH:/home/kanban/.npm-global/bin
 
 WORKDIR /repos
 

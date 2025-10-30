@@ -39,7 +39,7 @@ docker compose up -d
 ### 3. コンテナへの接続
 
 ```bash
-docker compose exec -u appuser app bash
+docker compose exec -u kanban app bash
 ```
 
 ## 初回セットアップ（Docker 内で実行）
@@ -106,10 +106,10 @@ http://localhost:4989
 
 ### コンテナ内での作業
 
-通常の開発作業は`appuser`として実行します：
+通常の開発作業は`kanban`として実行します：
 
 ```bash
-docker compose exec -u appuser app bash
+docker compose exec -u kanban app bash
 ```
 
 root が必要な場合：
