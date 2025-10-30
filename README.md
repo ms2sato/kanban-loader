@@ -51,7 +51,7 @@ docker compose exec -u kanban app bash
 コンテナ内で初回起動して認証を行います：
 
 ```bash
-claude-code
+claude
 # 画面の指示に従ってAPI keyの設定などを行う
 ```
 
@@ -102,6 +102,25 @@ Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 
 ```
 http://localhost:4989
+```
+
+システム起動直後は少し時間がかかるので、以下のようにログを確認して起動してからアクセスすると良いです。
+
+```
+$ docker-compose logs -f app
+npm warn exec The following package was not found and will be installed: vibe-kanban@0.0.113
+app-1  | 📦 Extracting vibe-kanban...
+app-1  | 🚀 Launching vibe-kanban...
+app-1  | 2025-10-30T00:49:03.438100Z  INFO services::services::config: No config file found, creating one
+app-1  | 2025-10-30T00:49:03.467726Z  INFO executors::profile: No user profiles.json found, using defaults only
+app-1  | 2025-10-30T00:49:04.998122Z  INFO local_deployment: Starting orphaned image cleanup...
+app-1  | 2025-10-30T00:49:05.038877Z  INFO local_deployment::container: Starting periodic worktree cleanup...
+app-1  | 2025-10-30T00:49:05.123203Z  INFO services::services::pr_monitor: Starting PR monitoring service with interval 60s
+app-1  | 2025-10-30T00:49:05.253071Z  INFO services::services::file_search_cache: Starting file search cache warming...
+app-1  | 2025-10-30T00:49:05.280433Z  INFO services::services::file_search_cache: No active projects found, skipping cache warming
+app-1  | 2025-10-30T00:49:05.389750Z  INFO server: Server running on http://0.0.0.0:3000
+app-1  | 2025-10-30T00:49:05.390068Z  INFO server: Opening browser...
+app-1  | 2025-10-30T00:49:05.427068Z  WARN server: Failed to open browser automatically: No such file or directory (os error 2). Please open http://127.0.0.1:3000 manually.
 ```
 
 ### コンテナ内での作業
@@ -179,7 +198,7 @@ docker compose up -d --build
 コンテナ内で vibe-kanban を最新版に更新できます：
 
 ```bash
-docker compose exec -u root app npm update -g vibe-kanban
+docker compose exec app npm update -g vibe-kanban
 docker compose restart
 ```
 
@@ -227,4 +246,6 @@ gh auth login
 
 ## ライセンス
 
-このプロジェクトの設定ファイル群は自由に使用できます。ベースとなる vibe-kanban および各ツールのライセンスについては、それぞれのプロジェクトを参照してください。
+このプロジェクト（kanban-loader）は MIT ライセンスの下で公開されています。
+
+なお、vibe-kanban、Claude Code、GitHub CLI、その他の統合ツールについては、それぞれのプロジェクトのライセンスを参照してください。
