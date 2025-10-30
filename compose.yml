@@ -1,5 +1,6 @@
 services:
   app:
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile
@@ -12,7 +13,7 @@ services:
       - DOCKER_BUILDKIT=1
     volumes:
       - repos-volume:/repos
-      - vibe-kanban-shared:/home/appuser/.local/share/vibe-kanban
+      - ./data/vibe-kanban:/home/appuser/.local/share/vibe-kanban
       - vibe-kanban-cache:/home/appuser/.cache/vibe-kanban
       - vibe-kanban-tmp:/tmp/vibe-kanban
       - npm-global:/usr/local/lib/node_modules

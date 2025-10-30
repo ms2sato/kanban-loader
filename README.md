@@ -1,23 +1,23 @@
 # kanban-loader
 
-[vibe-kanban](https://github.com/BloopAI/vibe-kanban)をベースに、開発に必要なツール(Claude Code、GitHub CLI、Node.jsなど)を統合したDocker環境です。
+[vibe-kanban](https://github.com/BloopAI/vibe-kanban)をベースに、開発に必要なツール(Claude Code、GitHub CLI、Node.js など)を統合した Docker 環境です。
 
 ## 概要
 
-このプロジェクトは、npmパッケージ版のvibe-kanbanに以下のツールを追加した開発環境を提供します：
+このプロジェクトは、npm パッケージ版の vibe-kanban に以下のツールを追加した開発環境を提供します：
 
-- **vibe-kanban** - AI開発タスク管理ツール（npmパッケージ版）
-- **Claude Code** - AI支援開発ツール
-- **GitHub CLI (gh)** - GitHubコマンドラインツール
+- **vibe-kanban** - AI 開発タスク管理ツール（npm パッケージ版）
+- **Claude Code** - AI 支援開発ツール
+- **GitHub CLI (gh)** - GitHub コマンドラインツール
 - **Git** - バージョン管理
-- **Node.js 22** - JavaScriptランタイム
-- **SSH Agent統合** - 1Password経由の認証
-- **追加パッケージ** - カスタマイズ可能なaptパッケージ
+- **Node.js 22** - JavaScript ランタイム
+- **SSH Agent 統合** - 1Password 経由の認証
+- **追加パッケージ** - カスタマイズ可能な apt パッケージ
 
 ## 前提条件
 
-- Docker Desktop（Docker Compose対応）
-- 1Password（SSH Agent機能を使用する場合）
+- Docker Desktop（Docker Compose 対応）
+- 1Password（SSH Agent 機能を使用する場合）
 
 ## セットアップ
 
@@ -42,11 +42,11 @@ docker compose up -d
 docker compose exec -u appuser app bash
 ```
 
-## 初回セットアップ（Docker内で実行）
+## 初回セットアップ（Docker 内で実行）
 
 コンテナ起動後、**コンテナ内**で以下の初期化を行います。
 
-### Claude Codeの初期化
+### Claude Code の初期化
 
 コンテナ内で初回起動して認証を行います：
 
@@ -55,9 +55,9 @@ claude-code
 # 画面の指示に従ってAPI keyの設定などを行う
 ```
 
-### GitHub CLIの認証
+### GitHub CLI の認証
 
-コンテナ内でGitHub認証を行います：
+コンテナ内で GitHub 認証を行います：
 
 ```bash
 gh auth login
@@ -73,9 +73,9 @@ gh auth login
 gh auth status
 ```
 
-### SSH Agentについて
+### SSH Agent について
 
-1PasswordのSSH Agentソケットが`/ssh-agent`にマウントされています。これにより、ホストマシンの1Passwordに保存されたSSH鍵をコンテナ内から使用できます。特別な初期化作業は不要です。
+1Password の SSH Agent ソケットが`/ssh-agent`にマウントされています。これにより、ホストマシンの 1Password に保存された SSH 鍵をコンテナ内から使用できます。特別な初期化作業は不要です。
 
 ### リポジトリのクローン
 
@@ -86,7 +86,7 @@ cd /repos
 git clone git@github.com:username/repository.git
 ```
 
-**注意:** 初回のgit clone時にSSH fingerprintの確認プロンプトが表示されます。`yes`を入力して接続を許可してください。
+**注意:** 初回の git clone 時に SSH fingerprint の確認プロンプトが表示されます。`yes`を入力して接続を許可してください。
 
 ```
 The authenticity of host 'github.com (xx.xx.xx.xx)' can't be established.
@@ -96,9 +96,9 @@ Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 
 ## 使用方法
 
-### vibe-kanbanサーバーへのアクセス
+### vibe-kanban サーバーへのアクセス
 
-コンテナ起動後、以下のURLでアクセスできます：
+コンテナ起動後、以下の URL でアクセスできます：
 
 ```
 http://localhost:4989
@@ -112,7 +112,7 @@ http://localhost:4989
 docker compose exec -u appuser app bash
 ```
 
-rootが必要な場合：
+root が必要な場合：
 
 ```bash
 docker compose exec app bash
@@ -149,19 +149,19 @@ docker compose logs -f app
 
 永続化されるデータ：
 
-- `repos-volume` - `/repos` - クローンしたリポジトリ
-- `vibe-kanban-shared` - vibe-kanban共有データ
-- `vibe-kanban-cache` - vibe-kanbanキャッシュ
-- `vibe-kanban-tmp` - vibe-kanban一時ファイル
-- `npm-global` - グローバルNode.jsモジュール
-- `npm-bin` - Node.jsバイナリ
-- `claude-config` - Claude設定
-- `gh-config` - GitHub CLI設定
+- `repos-volume` - `/repos` - クローンしたリポジトリ（Named Volume）
+- `./data/vibe-kanban-shared` - vibe-kanban 共有データ
+- `./data/vibe-kanban-cache` - vibe-kanban キャッシュ
+- `./data/vibe-kanban-tmp` - vibe-kanban 一時ファイル
+- `./data/claude` - Claude 設定（`.claude.json`含む）
+- `./data/gh` - GitHub CLI 設定
 
 ホストからマウントされるデータ：
 
-- `~/.gitconfig` - Git設定（読み取り専用）
+- `~/.gitconfig` - Git 設定（読み取り専用）
 - `~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock` - 1Password SSH Agent
+
+**注意:** `./data`ディレクトリ内のファイルは永続化されます。`docker compose down`しても設定は保持されます。
 
 ## カスタマイズ
 
@@ -174,9 +174,9 @@ echo "your-package-name" >> config/apt.txt
 docker compose up -d --build
 ```
 
-### vibe-kanbanのアップデート
+### vibe-kanban のアップデート
 
-コンテナ内でvibe-kanbanを最新版に更新できます：
+コンテナ内で vibe-kanban を最新版に更新できます：
 
 ```bash
 docker compose exec -u root app npm update -g vibe-kanban
@@ -192,7 +192,7 @@ docker compose restart
 services:
   app:
     ports:
-      - "8080:3000"  # 例：8080番ポートに変更
+      - "8080:3000" # 例：8080番ポートに変更
 ```
 
 変更後、コンテナを再起動：
@@ -203,13 +203,13 @@ docker compose up -d
 
 ## トラブルシューティング
 
-### SSH接続できない
+### SSH 接続できない
 
-1. 1PasswordのSSH Agent機能が有効になっているか確認
-2. SSH鍵が1Passwordに登録されているか確認
+1. 1Password の SSH Agent 機能が有効になっているか確認
+2. SSH 鍵が 1Password に登録されているか確認
 3. コンテナ内で`echo $SSH_AUTH_SOCK`が`/ssh-agent`を指しているか確認
 
-### Claude Codeが起動しない
+### Claude Code が起動しない
 
 コンテナ内で設定ファイルのパーミッションを確認：
 
@@ -217,7 +217,7 @@ docker compose up -d
 ls -la ~/.claude.json
 ```
 
-### GitHub CLIの認証が切れた
+### GitHub CLI の認証が切れた
 
 コンテナ内で再認証：
 
@@ -227,4 +227,4 @@ gh auth login
 
 ## ライセンス
 
-このプロジェクトの設定ファイル群は自由に使用できます。ベースとなるvibe-kanbanおよび各ツールのライセンスについては、それぞれのプロジェクトを参照してください。
+このプロジェクトの設定ファイル群は自由に使用できます。ベースとなる vibe-kanban および各ツールのライセンスについては、それぞれのプロジェクトを参照してください。
