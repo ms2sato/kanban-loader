@@ -1,5 +1,6 @@
 services:
   app:
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile
@@ -12,14 +13,14 @@ services:
       - DOCKER_BUILDKIT=1
     volumes:
       - repos-volume:/repos
-      - vibe-kanban-shared:/home/appuser/.local/share/vibe-kanban
-      - vibe-kanban-cache:/home/appuser/.cache/vibe-kanban
+      - ./data/vibe-kanban:/home/kanban/.local/share/vibe-kanban
+      - vibe-kanban-cache:/home/kanban/.cache/vibe-kanban
       - vibe-kanban-tmp:/tmp/vibe-kanban
       - npm-global:/usr/local/lib/node_modules
       - npm-bin:/usr/local/bin
-      - claude-config:/home/appuser/.claude
-      - gh-config:/home/appuser/.config/gh
-      - ~/.gitconfig:/home/appuser/.gitconfig:ro
+      - claude-config:/home/kanban/.claude
+      - gh-config:/home/kanban/.config/gh
+      - ~/.gitconfig:/home/kanban/.gitconfig:ro
       - ~/.gitconfig:/root/.gitconfig:ro
       - ~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock:/ssh-agent
     restart: unless-stopped

@@ -1,3 +1,4 @@
 data
 config/apk.txt
+config/apt.txt
 compose.override.yml

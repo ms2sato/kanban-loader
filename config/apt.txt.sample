@@ -1,4 +1,3 @@
-bash
 bash-completion
 curl
 wget
@@ -11,3 +10,4 @@ findutils
 coreutils
 procps
 htop
+vim
