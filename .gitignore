@@ -2,3 +2,6 @@ data
 config/apk.txt
 config/apt.txt
 compose.override.yml
+
+# Claude Code personal settings
+.claude/settings.local.json
