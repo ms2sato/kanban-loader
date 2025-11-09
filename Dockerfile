@@ -1,6 +1,17 @@
 FROM node:22-bookworm-slim
 
-USER root
+# for chromium
+RUN cat > /etc/apt/sources.list.d/debian.sources <<'EOF'
+Types: deb
+URIs: http://deb.debian.org/debian
+Suites: bookworm bookworm-updates
+Components: main contrib non-free non-free-firmware
+
+Types: deb
+URIs: http://security.debian.org/
+Suites: bookworm-security
+Components: main contrib non-free non-free-firmware
+EOF
 
 # Install basic packages and tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -31,7 +42,8 @@ RUN mkdir -p /home/kanban/.local/share/vibe-kanban && \
     mkdir -p /home/kanban/.cache/vibe-kanban && \
     mkdir -p /home/kanban/.claude && \
     mkdir -p /repos && \
-    chown -R kanban:node /home/kanban /repos
+    mkdir -p /tmp/kanban-loader/shared && \
+    chown -R kanban:node /home/kanban /repos /tmp/kanban-loader/shared
 
 # Install additional packages (optional)
 # Copy and use apt.txt only if it exists
@@ -50,6 +62,9 @@ RUN chmod +x /entrypoint.sh
 
 ENV NPM_CONFIG_PREFIX=/home/kanban/.npm-global
 ENV PATH=$PATH:/home/kanban/.npm-global/bin
+
+RUN --mount=type=bind,source=./config,target=/mnt/config \
+    /mnt/config/chrome/setup-chrome-mcp.sh
 
 WORKDIR /repos
 
